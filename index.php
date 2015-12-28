@@ -6,10 +6,11 @@
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   
     <script type="text/javascript">
  // Load the Visualization API and the piechart package.
@@ -17,8 +18,11 @@
           </script>
 
     <script type="text/javascript">
-      google.setOnLoadCallback(drawChart);
+
     var limit=60;//default to last hour
+       $(function() {
+ redraw(limit)
+  });
 function drawGauge(ppm)
 {
 	ppm=parseInt(ppm);
@@ -39,16 +43,8 @@ function drawGauge(ppm)
 
 }
 
-      function drawChart() {
+      function drawChart(jsonData) {
         
-      var jsonData = $.ajax({
-          url: "json.php?limit="+limit,
-          dataType: "json",
-          async: false
-          }).responseJSON;
-
-drawGauge(jsonData[0].ppm);
-//console.log(jsonData);
 var data = new google.visualization.DataTable();
 data.addColumn('date', 'Date');
 data.addColumn('number', 'PPM');
@@ -65,21 +61,25 @@ data.addRows([ [d, parseInt(item.ppm),tooltip]]);
 });
 
         var options = {
+
+               'chartArea': {'width': '80%', 'height': '80%'},
           title: 'CO2 concentration',
           curveType: 'function',
           legend: { position: 'bottom' },
           hAxis: {
+          format: 'HH:mm',
           gridlines: {
             count: -1,
             units: {
               days: {format: ['MMM dd']},
-              hours: {format: ['HH:mm', 'ha']},
+              hours: {format: ['HH:mm']},
+              minutes: {format: ['HH:mm']},
             }
           },
           minorGridlines: {
             units: {
-              hours: {format: ['hh:mm:ss a', 'ha']},
-              minutes: {format: ['HH:mm a Z', 'mm']}
+              hours: {format: ['HH:mm:ss']},
+              minutes: {format: ['HH:mm', 'mm']}
             }
           }
 
@@ -93,10 +93,29 @@ data.addRows([ [d, parseInt(item.ppm),tooltip]]);
       }
 function redraw(new_limit)
 {
-    limit=new_limit;
-    drawChart();
+    if(typeof new_limit === 'undefined')
+	new_limit=60;
+if(limit!=new_limit)
+{
+ var loader='<div class="progress">'+
+  '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">'
+    +'<span class="sr-only">45% Complete</span>'
+  +'</div>'+
+'</div>';
+$("#curve_chart").html(loader);
 }
- setInterval(function(){ drawChart() }, 3000);
+    limit=new_limit;
+      var jsonData = $.ajax({
+          url: "json.php?limit="+limit,
+          dataType: "json",
+          async: false
+          }).responseJSON;
+
+drawGauge(jsonData[0].ppm);
+//console.log(jsonData);
+    drawChart(jsonData);
+}
+ setInterval(function(){ redraw(limit) }, 3000);
     </script>
   </head>
   <body>
