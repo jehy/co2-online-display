@@ -35,7 +35,7 @@ function drawGauge(ppm)
           width: 200, height: 200,
           redFrom: 1000, redTo: 2000,
           yellowFrom:700, yellowTo: 1000,
-          minorTicks: 100, max: 1200,min:300
+          minorTicks: 10, max: 1200,min:300,majorTicks: ["300","500","700","1000","1200"]
         };
 	var d=document.getElementById('gauge_chart');
         var chart = new google.visualization.Gauge(d);
