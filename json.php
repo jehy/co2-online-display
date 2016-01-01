@@ -4,7 +4,8 @@ $limit=(int)$_REQUEST['limit'];
 if(!$limit)
     $limit=60;
 $sql='SELECT CEIL(AVG(ppm)) `ppm`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"%H:%i")) `date` FROM co2.data
- GROUP BY DATE(added),DATE_FORMAT(added,"%H-%i") ORDER BY added DESC limit ?';
+where added>=DATE_SUB(NOW(), INTERVAL ? minute)
+ GROUP BY DATE(added),DATE_FORMAT(added,"%H-%i") ORDER BY added DESC';
 
     $stmt = $mysqli->prepare($sql);
     $r = $stmt->bind_param('i', $limit);
