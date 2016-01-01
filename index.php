@@ -20,6 +20,8 @@
     <script type="text/javascript">
 
     var limit=60;//default to last hour
+var line_chart=null;
+var gauge_chart=null;
        $(function() {
  redraw(limit)
   });
@@ -38,8 +40,11 @@ function drawGauge(ppm)
           minorTicks: 10, max: 1200,min:300,majorTicks: ["300","500","700","1000","1200"]
         };
 	var d=document.getElementById('gauge_chart');
-        var chart = new google.visualization.Gauge(d);
-        chart.draw(data, options);
+
+          if(gauge_chart != null)
+              gauge_chart.clearChart();
+        gauge_chart = new google.visualization.Gauge(d);
+        gauge_chart.draw(data, options);
 
 }
 
@@ -93,9 +98,11 @@ data.addRows([ [d, parseInt(item.ppm), 700, 1000, tooltip]]);
 
         };
 
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+          if(line_chart != null)
+              line_chart.clearChart();
+        line_chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
-        chart.draw(data, options);
+        line_chart.draw(data, options);
       }
 function redraw(new_limit)
 {
@@ -120,8 +127,12 @@ $("#curve_chart").html(loader);
 drawGauge(jsonData[0].ppm);
 //console.log(jsonData);
     drawChart(jsonData);
+setTimeout(function(){redraw(limit)}, 3000);
 }
- setInterval(function(){ redraw(limit) }, 3000);
+
+
+setTimeout(function(){redraw(limit)}, 3000);
+// setInterval(function(){ redraw(limit) }, 3000);
     </script>
   </head>
   <body>
