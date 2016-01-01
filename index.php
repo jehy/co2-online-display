@@ -53,9 +53,9 @@ function drawGauge(ppm)
 var data = new google.visualization.DataTable();
 data.addColumn('date', 'Date');
 data.addColumn('number', 'PPM');
+data.addColumn({type: 'string', role: 'tooltip'});
 data.addColumn('number', 'Warning');
 data.addColumn('number', 'Danger');
-data.addColumn({type: 'string', role: 'tooltip'});
 $.each(jsonData, function(i,item)
 {
 var d1=item.date.split(' ');
@@ -64,7 +64,7 @@ var time=d1[1].split(':');
 var d=new Date(date[0], date[1], date[2], time[0], time[1]);
 //console.log(d,item.ppm)
 var tooltip=d1[1]+"\nPPM:"+item.ppm;
-data.addRows([ [d, parseInt(item.ppm), 700, 1000, tooltip]]);
+data.addRows([ [d, parseInt(item.ppm), tooltip, 700, 1000]]);
 });
 
         var options = {
