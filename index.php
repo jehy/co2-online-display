@@ -132,7 +132,7 @@ data.addRows([ [d, parseInt(item.ram), tooltip]]);
             2: { color: '#e2431e' },
           },
          'chartArea': {'width': '80%', 'height': '80%'},
-          title: 'RAM state',
+          title: 'Free RAM, bytes',
           curveType: 'function',
           legend: { position: 'bottom' },
           hAxis: {
