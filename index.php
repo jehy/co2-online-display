@@ -20,8 +20,9 @@
     <script type="text/javascript">
 
     var limit=60;//default to last hour
-var line_chart=null;
+var ppm_chart=null;
 var gauge_chart=null;
+var ram_chart=null;
        $(function() {
  redraw(limit)
   });
@@ -48,7 +49,7 @@ function drawGauge(ppm)
 
 }
 
-      function drawChart(jsonData) {
+      function drawChartPPM(jsonData) {
         
 var data = new google.visualization.DataTable();
 data.addColumn('date', 'Date');
@@ -98,12 +99,69 @@ data.addRows([ [d, parseInt(item.ppm), tooltip, 700, 1000]]);
 
         };
 
-          if(line_chart != null)
-              line_chart.clearChart();
-        line_chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+          if(ppm_chart != null)
+              ppm_chart.clearChart();
+        ppm_chart = new google.visualization.LineChart(document.getElementById('ppm_chart'));
 
-        line_chart.draw(data, options);
+        ppm_chart.draw(data, options);
       }
+
+
+
+      function drawChartRAM(jsonData) {
+        
+var data = new google.visualization.DataTable();
+data.addColumn('date', 'Date');
+data.addColumn('number', 'RAM');
+data.addColumn({type: 'string', role: 'tooltip'});
+$.each(jsonData, function(i,item)
+{
+var d1=item.date.split(' ');
+var date=d1[0].split('-');
+var time=d1[1].split(':');
+var d=new Date(date[0], date[1], date[2], time[0], time[1]);
+//console.log(d,item.ram)
+var tooltip=d1[1]+"\nRAM:"+item.ram;
+data.addRows([ [d, parseInt(item.ram), tooltip]]);
+});
+
+        var options = {
+          series: {
+            0: { color: '#43459d' },
+            1: { color: '#ffc870' },
+            2: { color: '#e2431e' },
+          },
+         'chartArea': {'width': '80%', 'height': '80%'},
+          title: 'RAM state',
+          curveType: 'function',
+          legend: { position: 'bottom' },
+          hAxis: {
+          format: 'HH:mm',
+          gridlines: {
+            count: -1,
+            units: {
+              days: {format: ['MMM dd']},
+              hours: {format: ['HH:mm']},
+              minutes: {format: ['HH:mm']},
+            }
+          },
+          minorGridlines: {
+            units: {
+              hours: {format: ['HH:mm:ss']},
+              minutes: {format: ['HH:mm', 'mm']}
+            }
+          }
+
+          },
+
+        };
+
+          if(ram_chart != null)
+              ram_chart.clearChart();
+        ram_chart = new google.visualization.LineChart(document.getElementById('ram_chart'));
+
+        ram_chart.draw(data, options);
+}      
 function redraw(new_limit)
 {
     if(typeof new_limit === 'undefined')
@@ -119,14 +177,23 @@ $("#curve_chart").html(loader);
 }
     limit=new_limit;
       var jsonData = $.ajax({
-          url: "json.php?limit="+limit,
+          url: "json.php?stat=ppm&limit="+limit,
           dataType: "json",
           async: false
           }).responseJSON;
 
 drawGauge(jsonData[0].ppm);
 //console.log(jsonData);
-    drawChart(jsonData);
+    drawChartPPM(jsonData);
+
+      var jsonData2 = $.ajax({
+          url: "json.php?stat=ram&limit="+limit,
+          dataType: "json",
+          async: false
+          }).responseJSON;
+
+    drawChartRAM(jsonData2);
+
 setTimeout(function(){redraw(limit)}, 3000);
 }
 
@@ -149,6 +216,7 @@ setTimeout(function(){redraw(limit)}, 3000);
   <button type="button" class="btn btn-default" onclick="redraw(60*24*7)">Last week</button>
 </div>
 </div>
-    <div id="curve_chart" style="width: 100%; height: 800px"></div>
+    <div id="ppm_chart" style="width: 100%; height: 800px"></div>
+    <div id="ram_chart" style="width: 100%; height: 800px"></div>
   </body>
 </html>
