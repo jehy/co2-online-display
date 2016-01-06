@@ -16,7 +16,18 @@
  // Load the Visualization API and the piechart package.
       google.load("visualization", "1", {packages:["gauge",'corechart']});
           </script>
-
+<style>
+#gauge_chart
+{
+    width: 100%;
+    height: 200px;
+}
+#ppm_chart,#ram_chart
+{
+    width: 80%;
+    height: 80%;
+}
+</style>
     <script type="text/javascript">
 
     var limit=60;//default to last hour
@@ -194,12 +205,8 @@ drawGauge(jsonData[0].ppm);
 
     drawChartRAM(jsonData2);
 
-setTimeout(function(){redraw(limit)}, 3000);
+setTimeout(function(){redraw(limit)}, 5000);
 }
-
-
-setTimeout(function(){redraw(limit)}, 3000);
-// setInterval(function(){ redraw(limit) }, 3000);
     </script>
   </head>
   <body>
