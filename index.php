@@ -1,5 +1,6 @@
   <html>
   <head>
+<title>CO2 Data</title>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
@@ -35,7 +36,7 @@ var ppm_chart=null;
 var gauge_chart=null;
 var ram_chart=null;
        $(function() {
- redraw(limit)
+ redraw()
   });
 function drawGauge(ppm)
 {
@@ -172,9 +173,11 @@ data.addRows([ [d, parseInt(item.ram), tooltip]]);
         ram_chart = new google.visualization.LineChart(document.getElementById('ram_chart'));
 
         ram_chart.draw(data, options);
-}      
-function redraw(new_limit)
+}
+
+function setLimit(new_limit)
 {
+
     if(typeof new_limit === 'undefined')
 	new_limit=60;
 if(limit!=new_limit)
@@ -184,27 +187,46 @@ if(limit!=new_limit)
     +'<span class="sr-only">45% Complete</span>'
   +'</div>'+
 '</div>';
-$("#curve_chart").html(loader);
+$("#ppm_chart").html(loader);
+$("#ram_chart").html(loader);
+limit=new_limit;
 }
-    limit=new_limit;
+}
+function redraw()
+{
+var err_nodata='<div class="alert alert-danger">No data</div>';
       var jsonData = $.ajax({
           url: "json.php?stat=ppm&limit="+limit,
           dataType: "json",
           async: false
           }).responseJSON;
-
-drawGauge(jsonData[0].ppm);
-//console.log(jsonData);
+if(jsonData.length)
+{
+    drawGauge(jsonData[0].ppm);
     drawChartPPM(jsonData);
-
-      var jsonData2 = $.ajax({
+}
+else
+{
+    if(ppm_chart!=null)
+	ppm_chart.clearChart();
+    if(gauge_chart!=null)    
+	gauge_chart.clearChart();
+    $("#gauge_chart").html(err_nodata);
+    $("#ppm_chart").html(err_nodata);
+}
+      jsonData = $.ajax({
           url: "json.php?stat=ram&limit="+limit,
           dataType: "json",
           async: false
           }).responseJSON;
-
-    drawChartRAM(jsonData2);
-
+if(jsonData.length)
+    drawChartRAM(jsonData);
+else
+{
+    if(ram_chart!=null)
+        ram_chart.clearChart();
+    $("#ram_chart").html(err_nodata);
+}
 setTimeout(function(){redraw(limit)}, 5000);
 }
     </script>
@@ -214,13 +236,13 @@ setTimeout(function(){redraw(limit)}, 5000);
 
 <div class="btn-group btn-group-justified btn-group-lg" role="group" aria-label="">
 <div class="btn-group" role="group">  
-<button type="button" class="btn btn-default" onclick="redraw(60)">Last hour</button>
+<button type="button" class="btn btn-default" onclick="setLimit(60)">Last hour</button>
 </div>
 <div class="btn-group" role="group">
-  <button type="button" class="btn btn-default" onclick="redraw(60*24)">Last day</button>
+  <button type="button" class="btn btn-default" onclick="setLimit(60*24)">Last day</button>
 </div>
 <div class="btn-group" role="group">
-  <button type="button" class="btn btn-default" onclick="redraw(60*24*7)">Last week</button>
+  <button type="button" class="btn btn-default" onclick="setLimit(60*24*7)">Last week</button>
 </div>
 </div>
     <div id="ppm_chart" style="width: 100%; height: 800px"></div>
