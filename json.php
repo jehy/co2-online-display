@@ -37,6 +37,6 @@ header('Content-Type: application/json');
 echo $json;
 // Free result set
 mysqli_free_result($result);
-
-mysqli_close($con);
+$mysqli->close();
+//mysqli_close($con);
 ?>
