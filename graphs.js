@@ -2,9 +2,7 @@ var limit = 60;//default to last hour
 var ppm_chart = null;
 var gauge_chart = null;
 var ram_chart = null;
-;
 var temp_chart = null;
-;
 var hum_chart = null;
 
 $(function () {
@@ -176,7 +174,7 @@ function drawChartHum(jsonData) {
             2: {color: '#e2431e'}
         },
         'chartArea': {'width': '80%', 'height': '80%'},
-        title: 'Humifity, %',
+        title: 'Humidity, %',
         curveType: 'function',
         legend: {position: 'bottom'},
         hAxis: {
@@ -219,7 +217,7 @@ function drawChartTemp(jsonData) {
         var time = d1[1].split(':');
         var d = new Date(date[0], date[1], date[2], time[0], time[1]);
 //console.log(d,item.ram)
-        var tooltip = d1[1] + "\Temperature:" + item.temp;
+        var tooltip = d1[1] + "\nTemperature:" + item.temp;
         data.addRows([[d, parseInt(item.temp), tooltip]]);
     });
 
@@ -272,6 +270,8 @@ function setLimit(new_limit) {
             '</div>';
         $("#ppm_chart").html(loader);
         $("#ram_chart").html(loader);
+        $("#temp_chart").html(loader);
+        $("#hum_chart").html(loader);
         limit = new_limit;
     }
 }
