@@ -4,16 +4,15 @@ var gauge_chart = null;
 var ram_chart = null;
 
 $(function () {
-    google.load("visualization", "1", {packages: ["gauge", 'corechart']});
     redraw();
 
-    $("#button-hour").click(function () {
+    $("#btn-hour").click(function () {
         setLimit(60)
     });
-    $("#button-week").click(function () {
+    $("#btn-week").click(function () {
         setLimit(60 * 24)
     });
-    $("#button-day").click(function () {
+    $("#btn-day").click(function () {
         setLimit(60 * 24 * 7)
     });
 });
