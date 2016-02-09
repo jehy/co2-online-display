@@ -1,2 +1,2 @@
 # co2-online-display
-SImple web app to display CO2 data from another project
+Simple web app to display CO2 data from  project https://github.com/jehy/arduino-esp8266-mhz-19-serial

@@ -1,0 +1,10 @@
+
+#gauge_chart {
+    width: 100%;
+    height: 200px;
+}
+
+#ram_chart, #ppm_chart {
+    width: 100%;
+    height: 800px;
+}
