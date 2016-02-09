@@ -2,6 +2,10 @@ var limit = 60;//default to last hour
 var ppm_chart = null;
 var gauge_chart = null;
 var ram_chart = null;
+;
+var temp_chart = null;
+;
+var hum_chart = null;
 
 $(function () {
     redraw();
@@ -148,6 +152,114 @@ function drawChartRAM(jsonData) {
     ram_chart.draw(data, options);
 }
 
+
+function drawChartHum(jsonData) {
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('date', 'Date');
+    data.addColumn('number', 'Humidity');
+    data.addColumn({type: 'string', role: 'tooltip'});
+    $.each(jsonData, function (i, item) {
+        var d1 = item.date.split(' ');
+        var date = d1[0].split('-');
+        var time = d1[1].split(':');
+        var d = new Date(date[0], date[1], date[2], time[0], time[1]);
+//console.log(d,item.ram)
+        var tooltip = d1[1] + "\nHumidity:" + item.humidity;
+        data.addRows([[d, parseInt(item.humidity), tooltip]]);
+    });
+
+    var options = {
+        series: {
+            0: {color: '#43459d'},
+            1: {color: '#ffc870'},
+            2: {color: '#e2431e'}
+        },
+        'chartArea': {'width': '80%', 'height': '80%'},
+        title: 'Humifity, %',
+        curveType: 'function',
+        legend: {position: 'bottom'},
+        hAxis: {
+            format: 'HH:mm',
+            gridlines: {
+                count: -1,
+                units: {
+                    days: {format: ['MMM dd']},
+                    hours: {format: ['HH:mm']},
+                    minutes: {format: ['HH:mm']}
+                }
+            },
+            minorGridlines: {
+                units: {
+                    hours: {format: ['HH:mm:ss']},
+                    minutes: {format: ['HH:mm', 'mm']}
+                }
+            }
+        }
+
+    };
+
+    if (hum_chart != null)
+        hum_chart.clearChart();
+    hum_chart = new google.visualization.LineChart(document.getElementById('hum_chart'));
+
+    hum_chart.draw(data, options);
+}
+
+
+function drawChartTemp(jsonData) {
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('date', 'Date');
+    data.addColumn('number', 'Temperature');
+    data.addColumn({type: 'string', role: 'tooltip'});
+    $.each(jsonData, function (i, item) {
+        var d1 = item.date.split(' ');
+        var date = d1[0].split('-');
+        var time = d1[1].split(':');
+        var d = new Date(date[0], date[1], date[2], time[0], time[1]);
+//console.log(d,item.ram)
+        var tooltip = d1[1] + "\Temperature:" + item.temp;
+        data.addRows([[d, parseInt(item.temp), tooltip]]);
+    });
+
+    var options = {
+        series: {
+            0: {color: '#43459d'},
+            1: {color: '#ffc870'},
+            2: {color: '#e2431e'}
+        },
+        'chartArea': {'width': '80%', 'height': '80%'},
+        title: 'Temperature, C',
+        curveType: 'function',
+        legend: {position: 'bottom'},
+        hAxis: {
+            format: 'HH:mm',
+            gridlines: {
+                count: -1,
+                units: {
+                    days: {format: ['MMM dd']},
+                    hours: {format: ['HH:mm']},
+                    minutes: {format: ['HH:mm']}
+                }
+            },
+            minorGridlines: {
+                units: {
+                    hours: {format: ['HH:mm:ss']},
+                    minutes: {format: ['HH:mm', 'mm']}
+                }
+            }
+        }
+
+    };
+
+    if (temp_chart != null)
+        temp_chart.clearChart();
+    temp_chart = new google.visualization.LineChart(document.getElementById('temp_chart'));
+
+    temp_chart.draw(data, options);
+}
+
 function setLimit(new_limit) {
 
     if (typeof new_limit === 'undefined')
@@ -182,6 +294,7 @@ function redraw() {
         $("#gauge_chart").html(err_nodata);
         $("#ppm_chart").html(err_nodata);
     }
+
     jsonData = $.ajax({
         url: "json.php?stat=ram&limit=" + limit,
         dataType: "json",
@@ -194,6 +307,36 @@ function redraw() {
             ram_chart.clearChart();
         $("#ram_chart").html(err_nodata);
     }
+
+
+    jsonData = $.ajax({
+        url: "json.php?stat=temp&limit=" + limit,
+        dataType: "json",
+        async: false
+    }).responseJSON;
+    if (jsonData.length)
+        drawChartTemp(jsonData);
+    else {
+        if (temp_chart != null)
+            temp_chart.clearChart();
+        $("#temp_chart").html(err_nodata);
+    }
+
+
+    jsonData = $.ajax({
+        url: "json.php?stat=humidity&limit=" + limit,
+        dataType: "json",
+        async: false
+    }).responseJSON;
+    if (jsonData.length)
+        drawChartHum(jsonData);
+    else {
+        if (hum_chart != null)
+            hum_chart.clearChart();
+        $("#hum_chart").html(err_nodata);
+    }
+
+
     setTimeout(function () {
         redraw(limit)
     }, 5000);

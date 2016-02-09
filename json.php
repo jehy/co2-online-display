@@ -12,10 +12,16 @@ where added>=DATE_SUB(NOW(), INTERVAL ? minute)
     $sql = 'SELECT MIN(ram) `ram`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"%H:%i")) `date` FROM co2.data
 where added>=DATE_SUB(NOW(), INTERVAL ? minute)
  GROUP BY DATE(added),DATE_FORMAT(added,"%H-%i") ORDER BY added DESC';
+} elseif ($_REQUEST['stat'] == 'temp') {
 
-    /*$sql='SELECT `ram`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"%H:%i")) `date` FROM co2.data
-    where added>=DATE_SUB(NOW(), INTERVAL ? minute)
-     ORDER BY added DESC';*/
+    $sql = 'SELECT AVG(temp) `temp`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"%H:%i")) `date` FROM co2.data
+where added>=DATE_SUB(NOW(), INTERVAL ? minute)
+ GROUP BY DATE(added),DATE_FORMAT(added,"%H-%i") ORDER BY added DESC';
+} elseif ($_REQUEST['stat'] == 'humidity') {
+
+    $sql = 'SELECT AVG(humidity) `humidity`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"%H:%i")) `date` FROM co2.data
+where added>=DATE_SUB(NOW(), INTERVAL ? minute)
+ GROUP BY DATE(added),DATE_FORMAT(added,"%H-%i") ORDER BY added DESC';
 } else die('Error: parameter unknown!');
 $stmt = $mysqli->prepare($sql);
 $r = $stmt->bind_param('i', $limit);

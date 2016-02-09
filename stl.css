@@ -4,7 +4,7 @@
     height: 200px;
 }
 
-#ram_chart, #ppm_chart {
+#ram_chart, #ppm_chart, #temp_chart, #hum_chart {
     width: 100%;
     height: 800px;
 }
