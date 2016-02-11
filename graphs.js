@@ -12,10 +12,10 @@ $(function () {
         setLimit(60)
     });
     $("#btn-week").click(function () {
-        setLimit(60 * 24)
+        setLimit(60 * 24 * 7)
     });
     $("#btn-day").click(function () {
-        setLimit(60 * 24 * 7)
+        setLimit(60 * 24)
     });
 });
 function drawGauge(ppm) {
