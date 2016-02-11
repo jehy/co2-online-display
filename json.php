@@ -3,6 +3,9 @@ require_once('db.inc');
 $limit = (int)$_REQUEST['limit'];
 if (!$limit)
     $limit = 60;
+$maxlimit=60*24*7;
+if($limit>$maxlimit)
+    $limit=$maxlimit;
 if ($_REQUEST['stat'] == 'ppm') {
     $sql = 'SELECT CEIL(AVG(ppm)) `ppm`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"%H:%i")) `date` FROM co2.data
 where added>=DATE_SUB(NOW(), INTERVAL ? minute)
