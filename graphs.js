@@ -275,14 +275,24 @@ function setLimit(new_limit) {
         limit = new_limit;
     }
 }
+function format_error(txt)
+{
+    return '<div class="alert alert-danger">'+txt+'</div>';
+}
 function redraw() {
-    var err_nodata = '<div class="alert alert-danger">No data</div>';
+    var err_nodata = format_error('No data');
     var jsonData = $.ajax({
         url: "json.php?stat=ppm&limit=" + limit,
         dataType: "json",
         async: false
     }).responseJSON;
-    if (jsonData.length) {
+
+    if(typeof jsonData.error !=='undefined')
+    {
+        $("#gauge_chart").html(format_error(jsonData.error));
+        $("#ppm_chart").html(format_error(jsonData.error));
+    }
+    else if (jsonData.length) {
         drawGauge(jsonData[0].ppm);
         drawChartPPM(jsonData);
     }
@@ -300,7 +310,13 @@ function redraw() {
         dataType: "json",
         async: false
     }).responseJSON;
-    if (jsonData.length)
+
+
+    if(typeof jsonData.error !=='undefined')
+    {
+        $("#ram_chart").html(format_error(jsonData.error));
+    }
+    else if (jsonData.length)
         drawChartRAM(jsonData);
     else {
         if (ram_chart != null)
@@ -314,7 +330,13 @@ function redraw() {
         dataType: "json",
         async: false
     }).responseJSON;
-    if (jsonData.length)
+
+
+    if(typeof jsonData.error !=='undefined')
+    {
+        $("#temp_chart").html(format_error(jsonData.error));
+    }
+    else if (jsonData.length)
         drawChartTemp(jsonData);
     else {
         if (temp_chart != null)
@@ -328,7 +350,13 @@ function redraw() {
         dataType: "json",
         async: false
     }).responseJSON;
-    if (jsonData.length)
+
+
+    if(typeof jsonData.error !=='undefined')
+    {
+        $("#hum_chart").html(format_error(jsonData.error));
+    }
+    else if (jsonData.length)
         drawChartHum(jsonData);
     else {
         if (hum_chart != null)

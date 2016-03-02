@@ -3,7 +3,7 @@
 if (!$_REQUEST['data'])
     die(json_encode(['status' => 'error', 'msg' => 'no request data!']));
 
-require_once('db.inc');
+require_once('db.php');
 $data = $_REQUEST['data'];
 $data = json_decode($data, 1);
 if (!$data)

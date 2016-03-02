@@ -1,0 +1,6 @@
+<?
+class DbData
+{
+    public $database='co2',$host='localhost', $user='co2',$password='co2';
+}
+?>
