@@ -28,19 +28,15 @@ where added>=DATE_SUB(NOW(), INTERVAL ? minute)
 } else die('Error: parameter unknown!');
 $stmt = $mysqli->prepare($sql);
 if(!$stmt)
-    die("Error running query:" . $mysqli->error);
+    die("Error preparing query:" . $mysqli->error);
 $r = $stmt->bind_param('i', $limit);
-$stmt->execute();
+$res=$stmt->execute();
+if(!$res)
+    die("Error executing query:" . $mysqli->error);
 $result = $stmt->get_result();
-#$result=$mysqli->query($sql);
-
 $array = $result->fetch_all(MYSQLI_ASSOC);
-// Fetch all
-//mysqli_fetch_all($result,MYSQLI_ASSOC);
-
-#print_R($array);
-$json = json_encode($array);
 header('Content-Type: application/json');
+$json = json_encode($array);
 echo $json;
 // Free result set
 mysqli_free_result($result);
