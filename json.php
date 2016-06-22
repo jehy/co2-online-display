@@ -27,6 +27,8 @@ where added>=DATE_SUB(NOW(), INTERVAL ? minute)
  GROUP BY DATE(added),DATE_FORMAT(added,"%H-%i") ORDER BY added DESC';
 } else die('Error: parameter unknown!');
 $stmt = $mysqli->prepare($sql);
+if(!$stmt)
+    die("Error running query:" . $mysqli->error);
 $r = $stmt->bind_param('i', $limit);
 $stmt->execute();
 $result = $stmt->get_result();
