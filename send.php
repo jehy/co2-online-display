@@ -14,6 +14,8 @@ $stmt = $mysqli->prepare($sql);
 $stmt->bind_param('iisiii', $data['id'], $data['ppm'],
     $data['SSID'], $data['FreeRAM'], $data['temp'], $data['humidity']);
 $res = $stmt->execute();
+if($stmt->error)
+    die(json_encode(['status' => 'error', 'msg' => 'mysql error:'.$stmt->error]));
 if ($res)
     echo json_encode(['status' => 'ok']);
 else
