@@ -8,4 +8,6 @@ CREATE TABLE `data` (
   `temp` int(10) unsigned DEFAULT NULL,
   `humidity` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12669 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+CREATE INDEX added ON data(added);
