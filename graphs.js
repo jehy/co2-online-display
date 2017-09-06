@@ -274,6 +274,7 @@ function setLimit(new_limit) {
     $("#temp_chart").html(loader);
     $("#hum_chart").html(loader);
     limit = new_limit;
+    redraw();
   }
 }
 
@@ -284,10 +285,10 @@ function format_error(txt) {
 var err_nodata = format_error('No data');
 
 function redrawPPM() {
-  $.ajax({
+  return $.ajax({
     url: "json.php?stat=ppm&limit=" + limit,
     dataType: "json"
-  }).done(function (data) {
+  }).then(function (data) {
     if (data.length) {
       drawGauge(data[0].ppm);
       drawChartPPM(data);
@@ -300,7 +301,7 @@ function redrawPPM() {
       $("#gauge_chart").html(err_nodata);
       $("#ppm_chart").html(err_nodata);
     }
-  }).fail(function (error) {
+  }).catch(function (error) {
     $("#ppm_chart").html(format_error(error));
     $("#gauge_chart").html(format_error(error));
   });
@@ -308,10 +309,10 @@ function redrawPPM() {
 }
 
 function redrawRAM() {
-  $.ajax({
+  return $.ajax({
     url: "json.php?stat=ram&limit=" + limit,
     dataType: "json"
-  }).done(function (data) {
+  }).then(function (data) {
     if (data.length)
       drawChartRAM(data);
     else {
@@ -319,16 +320,16 @@ function redrawRAM() {
         ram_chart.clearChart();
       $("#ram_chart").html(err_nodata);
     }
-  }).fail(function (error) {
+  }).catch(function (error) {
     $("#ram_chart").html(format_error(error));
   });
 }
 
 function redrawTemp() {
-  $.ajax({
+  return $.ajax({
     url: "json.php?stat=temp&limit=" + limit,
     dataType: "json"
-  }).done(function (data) {
+  }).then(function (data) {
     if (data.length)
       drawChartTemp(data);
     else {
@@ -336,16 +337,16 @@ function redrawTemp() {
         temp_chart.clearChart();
       $("#temp_chart").html(err_nodata);
     }
-  }).fail(function (error) {
+  }).catch(function (error) {
     $("#temp_chart").html(format_error(error));
   });
 }
 
 function redrawHumidity() {
-  $.ajax({
+  return $.ajax({
     url: "json.php?stat=humidity&limit=" + limit,
     dataType: "json"
-  }).done(function (data) {
+  }).then(function (data) {
     if (data.length)
       drawChartHum(data);
     else {
@@ -353,18 +354,15 @@ function redrawHumidity() {
         hum_chart.clearChart();
       $("#hum_chart").html(err_nodata);
     }
-  }).fail(function (error) {
+  }).catch(function (error) {
     $("#hum_chart").html(format_error(error));
   });
 }
 
 function redraw() {
-  redrawPPM();
-  redrawRAM();
-  redrawTemp();
-  redrawHumidity();
-
-  setTimeout(function () {
-    redraw(limit)
-  }, 5000);
+  return Promise.all([redrawPPM(), redrawRAM(), redrawTemp(), redrawHumidity()])
+    .delay(5000)
+    .then(function () {
+      redraw()
+    });
 }
