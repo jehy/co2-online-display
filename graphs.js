@@ -1,4 +1,5 @@
-var limit = 60;//default to last hour
+var currentLimit = 0;
+var defaultLimit = 60;//default to last hour
 var ppm_chart = null;
 var gauge_chart = null;
 var ram_chart = null;
@@ -6,7 +7,7 @@ var temp_chart = null;
 var hum_chart = null;
 
 $(function () {
-  redraw();
+  setLimit(defaultLimit);
 
   $("#btn-hour").click(function () {
     setLimit(60)
@@ -259,11 +260,11 @@ function drawChartTemp(jsonData) {
   temp_chart.draw(data, options);
 }
 
-function setLimit(new_limit) {
+function setLimit(newLimit) {
 
-  if (typeof new_limit === 'undefined')
-    new_limit = 60;
-  if (limit !== new_limit) {
+  if (typeof newLimit === 'undefined')
+    newLimit = 60;
+  if (currentLimit !== newLimit) {
     var loader = '<div class="progress">' +
       '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">'
       + '<span class="sr-only">45% Complete</span>'
@@ -273,20 +274,20 @@ function setLimit(new_limit) {
     $("#ram_chart").html(loader);
     $("#temp_chart").html(loader);
     $("#hum_chart").html(loader);
-    limit = new_limit;
+    currentLimit = newLimit;
     redraw();
   }
 }
 
-function format_error(txt) {
+function formatError(txt) {
   return '<div class="alert alert-danger">' + txt + '</div>';
 }
 
-var err_nodata = format_error('No data');
+var err_nodata = formatError('No data');
 
 function redrawPPM() {
   return $.ajax({
-    url: "json.php?stat=ppm&limit=" + limit,
+    url: "json.php?stat=ppm&limit=" + currentLimit,
     dataType: "json"
   }).then(function (data) {
     if (data.length) {
@@ -302,15 +303,15 @@ function redrawPPM() {
       $("#ppm_chart").html(err_nodata);
     }
   }).catch(function (error) {
-    $("#ppm_chart").html(format_error(error));
-    $("#gauge_chart").html(format_error(error));
+    $("#ppm_chart").html(formatError(error));
+    $("#gauge_chart").html(formatError(error));
   });
 
 }
 
 function redrawRAM() {
   return $.ajax({
-    url: "json.php?stat=ram&limit=" + limit,
+    url: "json.php?stat=ram&limit=" + currentLimit,
     dataType: "json"
   }).then(function (data) {
     if (data.length)
@@ -321,13 +322,13 @@ function redrawRAM() {
       $("#ram_chart").html(err_nodata);
     }
   }).catch(function (error) {
-    $("#ram_chart").html(format_error(error));
+    $("#ram_chart").html(formatError(error));
   });
 }
 
 function redrawTemp() {
   return $.ajax({
-    url: "json.php?stat=temp&limit=" + limit,
+    url: "json.php?stat=temp&limit=" + currentLimit,
     dataType: "json"
   }).then(function (data) {
     if (data.length)
@@ -338,13 +339,13 @@ function redrawTemp() {
       $("#temp_chart").html(err_nodata);
     }
   }).catch(function (error) {
-    $("#temp_chart").html(format_error(error));
+    $("#temp_chart").html(formatError(error));
   });
 }
 
 function redrawHumidity() {
   return $.ajax({
-    url: "json.php?stat=humidity&limit=" + limit,
+    url: "json.php?stat=humidity&limit=" + currentLimit,
     dataType: "json"
   }).then(function (data) {
     if (data.length)
@@ -355,14 +356,18 @@ function redrawHumidity() {
       $("#hum_chart").html(err_nodata);
     }
   }).catch(function (error) {
-    $("#hum_chart").html(format_error(error));
+    $("#hum_chart").html(formatError(error));
   });
 }
 
 function redraw() {
-  return Promise.all([redrawPPM(), redrawRAM(), redrawTemp(), redrawHumidity()])
-    .delay(5000)
+  return Promise.all([redrawPPM(), redrawRAM(), redrawTemp(), redrawHumidity()]);
+}
+
+function redrawLoop() {
+  redraw().delay(5000)
     .then(function () {
-      redraw()
+      redrawLoop()
     });
 }
+redrawLoop();
