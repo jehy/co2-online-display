@@ -1,2 +1,3 @@
-db_data.php
 .idea
+node_modules
+dist/*
