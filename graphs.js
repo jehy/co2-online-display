@@ -6,20 +6,6 @@ var ram_chart = null;
 var temp_chart = null;
 var hum_chart = null;
 
-$(function () {
-  setLimit(defaultLimit);
-
-  $("#btn-hour").click(function () {
-    setLimit(60)
-  });
-  $("#btn-week").click(function () {
-    setLimit(60 * 24 * 7)
-  });
-  $("#btn-day").click(function () {
-    setLimit(60 * 24)
-  });
-});
-
 function drawGauge(ppm) {
   ppm = parseInt(ppm);
   var data = google.visualization.arrayToDataTable([
@@ -52,9 +38,7 @@ function drawChartPPM(jsonData) {
   data.addColumn('number', 'Danger');
   $.each(jsonData, function (i, item) {
     var d1 = item.date.split(' ');
-    var date = d1[0].split('-');
-    var time = d1[1].split(':');
-    var d = new Date(date[0], date[1], date[2], time[0], time[1]);
+    var d = moment(item.date).toDate();
 //console.log(d,item.ppm)
     var tooltip = d1[1] + "\nPPM:" + item.ppm;
     data.addRows([[d, parseInt(item.ppm), tooltip, 700, 1000]]);
@@ -107,9 +91,7 @@ function drawChartRAM(jsonData) {
   data.addColumn({type: 'string', role: 'tooltip'});
   $.each(jsonData, function (i, item) {
     var d1 = item.date.split(' ');
-    var date = d1[0].split('-');
-    var time = d1[1].split(':');
-    var d = new Date(date[0], date[1], date[2], time[0], time[1]);
+    var d = moment(item.date).toDate();
 //console.log(d,item.ram)
     var tooltip = d1[1] + "\nRAM:" + item.ram;
     data.addRows([[d, parseInt(item.ram), tooltip]]);
@@ -161,9 +143,7 @@ function drawChartHum(jsonData) {
   data.addColumn({type: 'string', role: 'tooltip'});
   $.each(jsonData, function (i, item) {
     var d1 = item.date.split(' ');
-    var date = d1[0].split('-');
-    var time = d1[1].split(':');
-    var d = new Date(date[0], date[1], date[2], time[0], time[1]);
+    var d = moment(item.date).toDate();
 //console.log(d,item.ram)
     var tooltip = d1[1] + "\nHumidity:" + item.humidity;
     data.addRows([[d, parseInt(item.humidity), tooltip]]);
@@ -215,9 +195,7 @@ function drawChartTemp(jsonData) {
   data.addColumn({type: 'string', role: 'tooltip'});
   $.each(jsonData, function (i, item) {
     var d1 = item.date.split(' ');
-    var date = d1[0].split('-');
-    var time = d1[1].split(':');
-    var d = new Date(date[0], date[1], date[2], time[0], time[1]);
+    var d = moment(item.date).toDate();
 //console.log(d,item.ram)
     var tooltip = d1[1] + "\nTemperature:" + item.temp;
     data.addRows([[d, parseInt(item.temp), tooltip]]);
@@ -361,13 +339,32 @@ function redrawHumidity() {
 }
 
 function redraw() {
-  return Promise.all([redrawPPM(), redrawRAM(), redrawTemp(), redrawHumidity()]);
+  return Promise.reduce([redrawPPM, redrawRAM, redrawTemp, redrawHumidity], function (res, updateRes) {
+    return updateRes();
+  }, Promise.resolve());
 }
 
 function redrawLoop() {
   redraw().delay(5000)
     .then(function () {
-      redrawLoop()
+      redrawLoop();
     });
 }
-redrawLoop();
+
+$(function () {
+  setLimit(defaultLimit);
+
+  $("#btn-hour").click(function () {
+    setLimit(60)
+  });
+  $("#btn-week").click(function () {
+    setLimit(60 * 24 * 7)
+  });
+  $("#btn-day").click(function () {
+    setLimit(60 * 24)
+  });
+  google.charts.load('visualization', '45', {
+    callback: redrawLoop,
+    packages: ['corechart', 'gauge']
+  });
+});
