@@ -2,12 +2,16 @@
 require_once('db.php');
 $limit = (int)$_REQUEST['limit'];
 if (!$limit)
+{
     $limit = 60;
+}
 $maxlimit=60*24*30;
 if($limit>$maxlimit)
+{
     $limit=$maxlimit;
+}
 
-$dateFormat='%H-%i';
+$dateFormat='%H:%i';
 if($limit>60*24*1)
 {
   $dateFormat='%H';
