@@ -357,11 +357,17 @@ $(function () {
   $("#btn-hour").click(function () {
     setLimit(60)
   });
+  $("#btn-day").click(function () {
+    setLimit(60 * 24)
+  });
   $("#btn-week").click(function () {
     setLimit(60 * 24 * 7)
   });
-  $("#btn-day").click(function () {
-    setLimit(60 * 24)
+  $("#btn-2weeks").click(function () {
+    setLimit(60 * 24 * 14)
+  });
+  $("#btn-month").click(function () {
+    setLimit(60 * 24 * 30)
   });
   google.charts.load('visualization', '45', {
     callback: redrawLoop,
