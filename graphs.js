@@ -1,4 +1,4 @@
-var currentLimit = 0;
+var currentLimit = 60;
 var defaultLimit = 60;//default to last hour
 var ppm_chart = null;
 var gauge_chart = null;
@@ -240,8 +240,11 @@ function drawChartTemp(jsonData) {
 
 function setLimit(newLimit) {
 
-  if (typeof newLimit === 'undefined')
+  var preload = false;
+  if (typeof newLimit === 'undefined') {
     newLimit = 60;
+    preload = true;
+  }
   if (currentLimit !== newLimit) {
     var loader = '<div class="progress">' +
       '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">'
@@ -253,7 +256,9 @@ function setLimit(newLimit) {
     $("#temp_chart").html(loader);
     $("#hum_chart").html(loader);
     currentLimit = newLimit;
-    redraw();
+    if(!preload) {
+      redraw();
+    }
   }
 }
 
