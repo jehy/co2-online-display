@@ -11,6 +11,6 @@ available if my sensor is offline today).
 # Installation
 
 1. Run script `co2.sql` in your database to create table.
-2. Copy file `db.inc.sample` to `db.inc` and put there your database credentials.
+2. Copy file `db_data.php.sample` to `db_data.php` and put there your database credentials.
 3. Reconfigure your arduino device to use your host.
 3. Enjoy!
