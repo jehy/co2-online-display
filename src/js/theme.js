@@ -202,6 +202,6 @@ const theme = {
   maskColor: 'rgba(255,255,255,0.3)',
 };
 
-Highcharts.theme = theme;
+//Highcharts.theme = theme;
 // Apply the theme
-Highcharts.setOptions(Highcharts.theme);
+//Highcharts.setOptions(Highcharts.theme);

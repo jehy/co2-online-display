@@ -30,23 +30,6 @@ Highcharts.chart('hum_chart', {
     },
     min: 0,
     max: 100,
-    plotLines: [{
-      value: 40,
-      color: 'green',
-      dashStyle: 'shortdash',
-      width: 2,
-      label: {
-        text: 'minimum',
-      },
-    }, {
-      value: 60,
-      color: 'red',
-      dashStyle: 'shortdash',
-      width: 2,
-      label: {
-        text: 'maximum',
-      },
-    }],
   },
   legend: {
     enabled: false,
@@ -54,12 +37,6 @@ Highcharts.chart('hum_chart', {
   plotOptions: {
     area: {
       fillColor: {
-        linearGradient: {
-          x1: 0,
-          y1: 0,
-          x2: 0,
-          y2: 1,
-        },
         stops: [
           [0, Highcharts.getOptions().colors[0]],
           [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')],
@@ -68,10 +45,10 @@ Highcharts.chart('hum_chart', {
       marker: {
         radius: 2,
       },
-      lineWidth: 1,
+      lineWidth: 2,
       states: {
         hover: {
-          lineWidth: 1,
+          lineWidth: 2,
         },
       },
     },
@@ -81,5 +58,15 @@ Highcharts.chart('hum_chart', {
     type: 'area',
     name: 'Humidity',
     data: humidity,
+    zoneAxis: 'y',
+    zones: [{
+      value: 20,
+      color: '#ff0000'
+    }, {
+      value: 60,
+      color: '#90ed7d'
+    }, {
+      color: '#ff0000'
+    }]
   }],
 });

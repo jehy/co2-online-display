@@ -30,23 +30,6 @@ Highcharts.chart('ppm_chart', {
     },
     min: 300,
     max: 2000,
-    plotLines: [{
-      value: 800,
-      color: 'yellow',
-      dashStyle: 'shortdash',
-      width: 2,
-      label: {
-        text: 'warning',
-      },
-    }, {
-      value: 1000,
-      color: 'red',
-      dashStyle: 'shortdash',
-      width: 2,
-      label: {
-        text: 'danger',
-      },
-    }],
   },
   legend: {
     enabled: false,
@@ -54,12 +37,6 @@ Highcharts.chart('ppm_chart', {
   plotOptions: {
     area: {
       fillColor: {
-        linearGradient: {
-          x1: 0,
-          y1: 0,
-          x2: 0,
-          y2: 1,
-        },
         stops: [
           [0, Highcharts.getOptions().colors[0]],
           [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')],
@@ -68,10 +45,10 @@ Highcharts.chart('ppm_chart', {
       marker: {
         radius: 2,
       },
-      lineWidth: 1,
+      lineWidth: 2,
       states: {
         hover: {
-          lineWidth: 1,
+          lineWidth: 2,
         },
       },
     },
@@ -81,5 +58,14 @@ Highcharts.chart('ppm_chart', {
     type: 'area',
     name: 'PPM',
     data: co2,
+    zones: [{
+      value: 600,
+      color: '#90ed7d'
+    }, {
+      value: 1000,
+      color: '#f7a35c'
+    }, {
+      color: '#ff0000'
+    }]
   }],
 });
