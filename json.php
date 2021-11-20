@@ -1,7 +1,10 @@
 <?
 require_once('db.php');
 $limit = (int)$_REQUEST['limit'];
-$sensorId = (int)$_REQUEST['sensorId'] || 1;
+$sensorId = (int)$_REQUEST['sensorId'];
+if(!$sensorId){
+    $sensorId = 1;
+}
 if (!$limit)
 {
     $limit = 60;
