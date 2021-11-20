@@ -1,6 +1,7 @@
 <?
 require_once('db.php');
 $limit = (int)$_REQUEST['limit'];
+$sensorId = (int)$_REQUEST['sensorId'] || 1;
 if (!$limit)
 {
     $limit = 60;
@@ -18,28 +19,28 @@ if($limit>60*24*1)
 }
 if ($_REQUEST['stat'] == 'ppm') {
     $sql = 'SELECT CEIL(AVG(ppm)) `ppm`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"'.$dateFormat.'")) `date` FROM data
-where added>=DATE_SUB(NOW(), INTERVAL ? minute)
+where added>=DATE_SUB(NOW(), INTERVAL ? minute) and sensor_id=?
  GROUP BY DATE(added),DATE_FORMAT(added,"'.$dateFormat.'") ORDER BY added DESC';
 } elseif ($_REQUEST['stat'] == 'ram') {
 
     $sql = 'SELECT MIN(ram) `ram`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"'.$dateFormat.'")) `date` FROM data
-where added>=DATE_SUB(NOW(), INTERVAL ? minute)
+where added>=DATE_SUB(NOW(), INTERVAL ? minute) and sensor_id=?
  GROUP BY DATE(added),DATE_FORMAT(added,"'.$dateFormat.'") ORDER BY added DESC';
 } elseif ($_REQUEST['stat'] == 'temp') {
 
     $sql = 'SELECT CEIL(AVG(temp)) `temp`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"'.$dateFormat.'")) `date` FROM data
-where added>=DATE_SUB(NOW(), INTERVAL ? minute)
+where added>=DATE_SUB(NOW(), INTERVAL ? minute) and sensor_id=?
  GROUP BY DATE(added),DATE_FORMAT(added,"'.$dateFormat.'") ORDER BY added DESC';
 } elseif ($_REQUEST['stat'] == 'humidity') {
 
     $sql = 'SELECT CEIL(AVG(humidity)) `humidity`, CONCAT(DATE(added)," ",DATE_FORMAT(added,"'.$dateFormat.'")) `date` FROM data
-where added>=DATE_SUB(NOW(), INTERVAL ? minute)
+where added>=DATE_SUB(NOW(), INTERVAL ? minute) and sensor_id=?
  GROUP BY DATE(added),DATE_FORMAT(added,"'.$dateFormat.'") ORDER BY added DESC';
 } else die('Error: parameter unknown!');
 $stmt = $mysqli->prepare($sql);
 if(!$stmt)
     die("Error preparing query:" . $mysqli->error);
-$r = $stmt->bind_param('i', $limit);
+$r = $stmt->bind_param('ii', $limit, $sensorId);
 $res=$stmt->execute();
 if(!$res)
     die("Error executing query:" . $mysqli->error);
