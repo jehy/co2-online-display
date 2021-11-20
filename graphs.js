@@ -6,6 +6,10 @@ var ram_chart = null;
 var temp_chart = null;
 var hum_chart = null;
 
+var url_string = window.location.href
+var url = new URL(url_string);
+var sensorId = url.searchParams.get("sensorId") || 1;
+
 function drawGauge(ppm) {
   ppm = parseInt(ppm);
   var data = google.visualization.arrayToDataTable([
@@ -270,7 +274,7 @@ var err_nodata = formatError('No data');
 
 function redrawPPM() {
   return $.ajax({
-    url: "json.php?stat=ppm&limit=" + currentLimit,
+    url: "json.php?stat=ppm&limit=" + currentLimit +'&sensorId='+sensorId,
     dataType: "json"
   }).then(function (data) {
     if (data.length) {
@@ -294,7 +298,7 @@ function redrawPPM() {
 
 function redrawRAM() {
   return $.ajax({
-    url: "json.php?stat=ram&limit=" + currentLimit,
+    url: "json.php?stat=ram&limit=" + currentLimit +'&sensorId='+sensorId,
     dataType: "json"
   }).then(function (data) {
     if (data.length)
@@ -311,7 +315,7 @@ function redrawRAM() {
 
 function redrawTemp() {
   return $.ajax({
-    url: "json.php?stat=temp&limit=" + currentLimit,
+    url: "json.php?stat=temp&limit=" + currentLimit +'&sensorId='+sensorId,
     dataType: "json"
   }).then(function (data) {
     if (data.length)
@@ -328,7 +332,7 @@ function redrawTemp() {
 
 function redrawHumidity() {
   return $.ajax({
-    url: "json.php?stat=humidity&limit=" + currentLimit,
+    url: "json.php?stat=humidity&limit=" + currentLimit +'&sensorId='+sensorId,
     dataType: "json"
   }).then(function (data) {
     if (data.length)
